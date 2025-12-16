@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@latest/fonts/remixicon.css" />
+  <link rel="shortcut icon" href="/" type="image/svg+xml" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <title>Postal Code Searching</title>
+</head>
+
+<body>
+  <div class="theme__switcher">
+    <div class="theme__icon active" data-theme="light">
+      <button><i class="ri-sun-line"></i></button>
+      <span class="theme__tooltip">Light Theme</span>
+    </div>
+    <div class="theme__icon" data-theme="dark">
+      <button><i class="ri-moon-clear-line"></i></button>
+      <span class="theme__tooltip">Dark Theme</span>
+    </div>
+  </div>
+
+  <div class="wrapper active">
+    <section>
+      <h1>Buscador de códigos postales</h1>
+      <div class="post-code__searching">
+        <div class="custom-select">
+          <select name="region" id="region" autocomplete="off">
+            <option value="MX">MX - México</option>
+            <option value="US">US - United State</option>
+            <option value="ES">ES - España</option>
+            <option value="AR">AR - Argentina</option>
+          </select>
+          <i class="ri-arrow-down-s-line"></i>
+        </div>
+        <input type="text" name="postal_code" id="postal-code" placeholder="Ingresa un código postal (ej. 01000 / 90210)" autocomplete="off">
+        <button id="cp-search">Buscar CP</button>
+      </div>
+      <div class="place__searching">
+        <input type="text" name="place" placeholder="Buscar por: ciudad, colonia, dirección..." autocomplete="off">
+        <button id="place-search">Buscar Lugar</button>
+      </div>
+      <div class="results">
+        <p class="text">Los resultados aparecerán aquí...</p>
+        <div class="place-search__results">
+          <div class="grid-section place">
+            <div class="info">Nombre Completo: <span>Calle General Antonio Rosales, Las Quintas, Culiacán, Culiacán Rosales, Culiacán, Sinaloa, 80060, México</span></div>
+            <div class="info">Código Postal: <span>80060</span></div>
+            <div class="info">Calle: <span>Calle General Antonio Rosales</span></div>
+            <div class="info">Colonia: <span>Las Quintas</span></div>
+            <div class="info">Ciudad: <span>Culiacán</span></div>
+            <div class="info">Estado: <span>Sinaloa</span></div>
+            <div class="info">Pais: <span>México</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="js/script.js" type="module"></script>
+</body>
+
+</html>
