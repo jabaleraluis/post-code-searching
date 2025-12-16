@@ -10,23 +10,21 @@ document.addEventListener("DOMContentLoaded", () => {
   $searchPC.addEventListener("click", async () => {
     const $region = document.getElementById("region").value;
 
-    if (!/^\d{5}$/.test($InputPC.value)) {
+    /* if (!/^\d{5}$/.test($InputPC.value)) {
       return validateInput($InputPC, "El código postal debe tener 5 números");
-    }
+    } */
 
-    $searchPC.disabled = true;
     $result.innerHTML = `<p class="loader">Buscando...<i class="ri-loader-line"></i></p>`;
 
     try {
       const controller = new AbortController();
-      const abortTimeout = setTimeout(() => controller.abort(), 2000);
+      const abortTimeout = setTimeout(() => controller.abort(), 5000);
 
-      const url = `http://ap.zippopotam.us/${$region}/${encodeURIComponent(
+      const url = `http://api.zippopotam.us/${$region}/${encodeURIComponent(
         $InputPC.value.trim()
       )}`;
       const res = await fetch(url, { signal: controller.signal });
       clearTimeout(abortTimeout);
-
       if (!res.ok) {
         if (res.status === 404) {
           throw new Error("NOT_FOUND");
@@ -52,19 +50,16 @@ document.addEventListener("DOMContentLoaded", () => {
           </ul>
         </div>`;
     } catch (err) {
-      if (err.name === "AbortError") {
-        return ($result.innerHTML = `<p class="error">La petición tardó demasiado en responder...</p>`);
-      } else if (err.message === "NOT_FOUND") {
-        return ($result.innerHTML = `<p class="error">No se encontró lugar para el código postal <span>${$InputPC.value.trim()}</span>, verifique que los datos sean correctos...</p>`);
-      } else if (err instanceof TypeError) {
-        return ($result.innerHTML = navigator.onLine
-          ? `<p class="error">El servidor no responde...</p>`
-          : `<p class="error">Parece que no estás conectado a internet... <i class="ri-wifi-off-line"></i></p>`);
-      } else {
-        return ($result.innerHTML = `<p class="error"><span>Error de conexión: </span>${err.message.toLowerCase()}...</p>`);
-      }
-    } finally {
-      $searchPC.disabled = false;
+      handleErrors(err, {
+        $result,
+        $InputPC,
+      });
+    }
+  });
+
+  $InputPC.addEventListener("keydown", (e) => {
+    if (e.key.toLocaleLowerCase() === "enter") {
+      $searchPC.click();
     }
   });
 
@@ -85,4 +80,33 @@ document.addEventListener("DOMContentLoaded", () => {
   $InputPC.addEventListener("input", () => {
     cleanInputPC($InputPC);
   });
+
+  /* ===== MANEJO DE ERRORES ===== */
+  const ERROR_MESSAGES = {
+    NOT_FOUND: (pc) =>
+      `<p class="error">No se encontró lugar para el código postal <span>${pc}</span>, verifique que los datos sean correctos...</p>`,
+    HTTP_ERROR: () =>
+      `<p class="error">El servidor respondió con un error, intentalo más tarde...</p>`,
+  };
+
+  const handleErrors = (err, { $result, $InputPC }) => {
+    if (err.name === "AbortError") {
+      $result.innerHTML = `<p class="error">La petición tardó demasiado en responder...</p>`;
+      return;
+    }
+
+    if (ERROR_MESSAGES[err.message]) {
+      $result.innerHTML = ERROR_MESSAGES[err.message]($InputPC.value.trim());
+      return;
+    }
+
+    if (err instanceof TypeError) {
+      $result.innerHTML = navigator.onLine
+        ? `<p class="error">Ha fallado la conexión con el servidor... <i class="ri-cloud-off-line"></i></p>`
+        : `<p class="error">Vaya!, parece que no estás conectado a internet... <i class="ri-wifi-off-line"></i></p>`;
+      return;
+    }
+
+    $result.innerHTML = `<p class="error"><span>Error de conexión: </span>${err.message.toLowerCase()}...</p>`;
+  };
 });
