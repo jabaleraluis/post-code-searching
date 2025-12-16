@@ -10,9 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
   $searchPC.addEventListener("click", async () => {
     const $region = document.getElementById("region").value;
 
-    /* if (!/^\d{5}$/.test($InputPC.value)) {
+    if (!/^\d{5}$/.test($InputPC.value)) {
       return validateInput($InputPC, "El código postal debe tener 5 números");
-    } */
+    }
 
     $result.innerHTML = `<p class="loader">Buscando...<i class="ri-loader-line"></i></p>`;
 
