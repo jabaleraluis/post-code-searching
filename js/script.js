@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const $searchPC = document.getElementById("cp-search");
   const $searchPlace = document.getElementById("place-search");
   const $InputPC = document.getElementById("postal-code");
+  const $inputPlace = document.getElementById("input-place");
   const $result = document.querySelector(".results");
 
   /* ===== BUSCAR POR CP ===== */
@@ -53,7 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
       handleErrors(err, {
         $result,
-        $InputPC,
+        input: $InputPC,
+        type: "postal",
       });
     } finally {
       $searchPC.disabled = false;
@@ -75,33 +77,69 @@ document.addEventListener("DOMContentLoaded", () => {
     input.reportValidity();
   };
 
-  const cleanInputPC = (input) => {
+  const cleanInput = (input) => {
     input.classList.remove("invalid");
     input.setCustomValidity("");
   };
 
   $InputPC.addEventListener("input", () => {
-    cleanInputPC($InputPC);
+    cleanInput($InputPC);
   });
 
   /* ===== BUSCAR POR LUGAR ===== */
+  $searchPlace.addEventListener("click", async () => {
+    if (!$inputPlace.value) {
+      return validateInput($inputPlace, "No puedes buscar un campo vacío");
+    }
+
+    $searchPlace.disabled = true;
+    $result.innerHTML = `<p class="loader">Buscando...<i class="ri-loader-line"></i></p>`;
+
+    try {
+    } catch (err) {
+      handleErrors(err, {
+        $result,
+        input: $InputPlace,
+        type: "place",
+      });
+    } finally {
+      $searchPlace.disabled = false;
+    }
+  });
+
+  $inputPlace.addEventListener("input", () => {
+    cleanInput($inputPlace);
+  });
 
   /* ===== MANEJO DE ERRORES ===== */
   const ERROR_MESSAGES = {
-    NOT_FOUND: (pc) =>
-      `<p class="error">No se encontró lugar para el código postal <span>${pc}</span>, verifique que los datos sean correctos...</p>`,
-    HTTP_ERROR: () =>
-      `<p class="error">El servidor respondió con un error, intentalo más tarde...</p>`,
+    postal: {
+      NOT_FOUND: (value) =>
+        `<p class="error">No se encontró lugar para el código postal <span>${value}</span>, verifique que los datos sean correctos...</p>`,
+    },
+    place: {
+      NOT_FOUND: (value) =>
+        `<p class="error">No se encontró código postal para <span>${value}</span>, verifique que los datos sean correctos...</p>`,
+    },
+    common: {
+      HTTP_ERROR: () =>
+        `<p class="error">El servidor respondió con un error, intentalo más tarde...</p>`,
+    },
   };
 
-  const handleErrors = (err, { $result, $InputPC }) => {
+  const handleErrors = (err, { $result, input, type }) => {
     if (err.name === "AbortError") {
-      $result.innerHTML = `<p class="error">La petición tardó demasiado en responder...</p>`;
+      $result.innerHTML = `<p class="error">La petición tardó demasiado en responder... <i class="ri-time-line"></i></p>`;
       return;
     }
 
-    if (ERROR_MESSAGES[err.message]) {
-      $result.innerHTML = ERROR_MESSAGES[err.message]($InputPC.value.trim());
+    if (ERROR_MESSAGES[type]?.[err.message]) {
+      $result.innerHTML = ERROR_MESSAGES[type][err.message](input?.value ?? "");
+      return;
+    }
+
+    if (ERROR_MESSAGES.common?.[err.message]) {
+      $result.innerHTML = ERROR_MESSAGES.common[err.message]();
       return;
     }
 
