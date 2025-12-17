@@ -4,9 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
   theme(".theme__switcher .theme__icon");
 
   const $searchPC = document.getElementById("cp-search");
+  const $searchPlace = document.getElementById("place-search");
   const $InputPC = document.getElementById("postal-code");
   const $result = document.querySelector(".results");
 
+  /* ===== BUSCAR POR CP ===== */
   $searchPC.addEventListener("click", async () => {
     const $region = document.getElementById("region").value;
 
@@ -14,15 +16,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return validateInput($InputPC, "El código postal debe tener 5 números");
     }
 
+    $searchPC.disabled = true;
     $result.innerHTML = `<p class="loader">Buscando...<i class="ri-loader-line"></i></p>`;
 
     try {
       const controller = new AbortController();
       const abortTimeout = setTimeout(() => controller.abort(), 5000);
 
-      const url = `http://api.zippopotam.us/${$region}/${encodeURIComponent(
-        $InputPC.value.trim()
-      )}`;
+      const url = `http://api.zippopotam.us/${$region}/${encodeURIComponent($InputPC.value)}`;
       const res = await fetch(url, { signal: controller.signal });
       clearTimeout(abortTimeout);
       if (!res.ok) {
@@ -54,6 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
         $result,
         $InputPC,
       });
+    } finally {
+      $searchPC.disabled = false;
     }
   });
 
@@ -80,6 +83,8 @@ document.addEventListener("DOMContentLoaded", () => {
   $InputPC.addEventListener("input", () => {
     cleanInputPC($InputPC);
   });
+
+  /* ===== BUSCAR POR LUGAR ===== */
 
   /* ===== MANEJO DE ERRORES ===== */
   const ERROR_MESSAGES = {
