@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const $inputPlace = document.getElementById("input-place");
   const $result = document.querySelector(".results");
 
+  const controller = new AbortController();
+  const abortTimeout = setTimeout(() => controller.abort(), 10000);
+
   /* ===== BUSCAR POR CP ===== */
   $searchPC.addEventListener("click", async () => {
     const $region = document.getElementById("region").value;
@@ -21,12 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
     $result.innerHTML = `<p class="loader">Buscando...<i class="ri-loader-line"></i></p>`;
 
     try {
-      const controller = new AbortController();
-      const abortTimeout = setTimeout(() => controller.abort(), 5000);
-
       const url = `http://api.zippopotam.us/${$region}/${encodeURIComponent($InputPC.value)}`;
-      const res = await fetch(url, { signal: controller.signal });
       clearTimeout(abortTimeout);
+      const res = await fetch(url, { signal: controller.signal });
       if (!res.ok) {
         if (res.status === 404) {
           throw new Error("NOT_FOUND");
@@ -96,10 +96,39 @@ document.addEventListener("DOMContentLoaded", () => {
     $result.innerHTML = `<p class="loader">Buscando...<i class="ri-loader-line"></i></p>`;
 
     try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=8&q=${encodeURIComponent(
+        $inputPlace.value.trim()
+      )}&accept-language=es`;
+
+      clearTimeout(abortTimeout);
+      const res = await fetch(url, { headers: {} }, { signal: controller.signal });
+
+      if (!res.ok) throw new Error("HTTP_ERROR");
+
+      const data = await res.json();
+
+      if (!data.length) throw new Error("NOT_FOUND");
+
+      const places = data[0];
+
+      $result.innerHTML = `
+        <div class="place-search__results">
+          <div class="grid-section place">
+            <div class="info">Nombre Completo: <span>${places?.display_name ?? "N/A"}</span></div>
+            <div class="info">Código Postal: <span>${places.address?.postcode ?? "N/A"}</span></div>
+            <div class="info">Calle: <span>${places.address?.road ?? "N/A"}</span></div>
+            <div class="info">Colonia: <span>${places.address?.quarter ?? "N/A"}</span></div>
+            <div class="info">Ciudad: <span>${places.address?.city ?? "N/A"}</span></div>
+            <div class="info">Estado: <span>${places.address?.state ?? "N/A"}</span></div>
+            <div class="info">Pais: <span>${places.address?.country ?? "N/A"}</span></div>
+          </div>
+        </div>`;
+
+      console.log(data);
     } catch (err) {
       handleErrors(err, {
         $result,
-        input: $InputPlace,
+        input: $inputPlace,
         type: "place",
       });
     } finally {
@@ -145,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (err instanceof TypeError) {
       $result.innerHTML = navigator.onLine
-        ? `<p class="error">Ha fallado la conexión con el servidor... <i class="ri-cloud-off-line"></i></p>`
+        ? `<p class="error">Ha fallado la conexión con el servidor... <i class="ri-cloud-off-line"></i> ${err.message} </p>`
         : `<p class="error">Vaya!, parece que no estás conectado a internet... <i class="ri-wifi-off-line"></i></p>`;
       return;
     }
