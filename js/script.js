@@ -9,8 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const $inputPlace = document.getElementById("input-place");
   const $result = document.querySelector(".results");
 
-  const controller = new AbortController();
-  const abortTimeout = setTimeout(() => controller.abort(), 10000);
+  let controller = null;
 
   /* ===== BUSCAR POR CP ===== */
   $searchPC.addEventListener("click", async () => {
@@ -20,13 +19,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return validateInput($InputPC, "El código postal debe tener 5 números");
     }
 
+    const { signal, clear } = abortController();
+
     $searchPC.disabled = true;
     $result.innerHTML = `<p class="loader">Buscando...<i class="ri-loader-line"></i></p>`;
 
     try {
       const url = `http://api.zippopotam.us/${$region}/${encodeURIComponent($InputPC.value)}`;
-      clearTimeout(abortTimeout);
-      const res = await fetch(url, { signal: controller.signal });
+      const res = await fetch(url, { signal });
       if (!res.ok) {
         if (res.status === 404) {
           throw new Error("NOT_FOUND");
@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     } finally {
       $searchPC.disabled = false;
+      clear();
     }
   });
 
@@ -92,6 +93,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return validateInput($inputPlace, "No puedes buscar un campo vacío");
     }
 
+    const { signal, clear } = abortController();
+
     $searchPlace.disabled = true;
     $result.innerHTML = `<p class="loader">Buscando...<i class="ri-loader-line"></i></p>`;
 
@@ -100,8 +103,10 @@ document.addEventListener("DOMContentLoaded", () => {
         $inputPlace.value.trim()
       )}&accept-language=es`;
 
-      clearTimeout(abortTimeout);
-      const res = await fetch(url, { headers: {} }, { signal: controller.signal });
+      const res = await fetch(url, {
+        signal,
+        headers: { Accept: "application/json" },
+      });
 
       if (!res.ok) throw new Error("HTTP_ERROR");
 
@@ -115,7 +120,9 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="place-search__results">
           <div class="grid-section place">
             <div class="info">Nombre Completo: <span>${places?.display_name ?? "N/A"}</span></div>
-            <div class="info">Código Postal: <span>${places.address?.postcode ?? "N/A"}</span></div>
+            <div class="info">Código Postal: <span>${
+              places.address?.postcode ?? "N/A"
+            }</span></div>
             <div class="info">Calle: <span>${places.address?.road ?? "N/A"}</span></div>
             <div class="info">Colonia: <span>${places.address?.quarter ?? "N/A"}</span></div>
             <div class="info">Ciudad: <span>${places.address?.city ?? "N/A"}</span></div>
@@ -133,12 +140,26 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     } finally {
       $searchPlace.disabled = false;
+      clear();
     }
   });
 
   $inputPlace.addEventListener("input", () => {
     cleanInput($inputPlace);
   });
+
+  /* ===== ABORT CONTROLLER ===== */
+  const abortController = () => {
+    controller?.abort();
+    controller = new AbortController();
+
+    const timeController = setTimeout(() => controller.abort(), 8000);
+
+    return {
+      signal: controller.signal,
+      clear: () => clearTimeout(timeController),
+    };
+  };
 
   /* ===== MANEJO DE ERRORES ===== */
   const ERROR_MESSAGES = {
@@ -158,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const handleErrors = (err, { $result, input, type }) => {
     if (err.name === "AbortError") {
-      $result.innerHTML = `<p class="error">La petición tardó demasiado en responder... <i class="ri-time-line"></i></p>`;
+      $result.innerHTML = `<p class="error">El servidor  tardó demasiado en responder... <i class="ri-time-line"></i></p>`;
       return;
     }
 
@@ -174,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (err instanceof TypeError) {
       $result.innerHTML = navigator.onLine
-        ? `<p class="error">Ha fallado la conexión con el servidor... <i class="ri-cloud-off-line"></i> ${err.message} </p>`
+        ? `<p class="error">Ha fallado la conexión con el servidor... <i class="ri-cloud-off-line"></i></p>`
         : `<p class="error">Vaya!, parece que no estás conectado a internet... <i class="ri-wifi-off-line"></i></p>`;
       return;
     }
