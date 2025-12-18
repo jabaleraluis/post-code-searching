@@ -144,6 +144,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  $inputPlace.addEventListener("keydown", (e) => {
+    if (e.key.toLocaleLowerCase() === "enter") {
+      $searchPlace.click();
+    }
+  });
+
   $inputPlace.addEventListener("input", () => {
     cleanInput($inputPlace);
   });
@@ -200,6 +206,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    $result.innerHTML = `<p class="error"><span>Error de conexión: </span>${err.message.toLowerCase()}...</p>`;
+    $result.innerHTML = `<p class="error"><span>Error de conexión: </span>${err.message}...</p>`;
   };
 });
