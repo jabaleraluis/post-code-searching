@@ -128,10 +128,13 @@ document.addEventListener("DOMContentLoaded", () => {
       ];
 
       const fieldStructure = fields
-        .map(
-          ({ name, key }) =>
-            `<div class="info">${name}: <span>${places.address?.[key] ?? "N/A"}</span></div>`
-        )
+        .map(({ name, key }) => {
+          const value = places.address?.[key];
+          if (!value) return "";
+          return `
+          <div class="info">${name}: <span>${value}</span></div>
+          `;
+        })
         .join("");
 
       $result.innerHTML = `
