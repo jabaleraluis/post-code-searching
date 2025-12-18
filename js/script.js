@@ -115,23 +115,32 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!data.length) throw new Error("NOT_FOUND");
 
       const places = data[0];
+      console.log(places);
+      const fields = [
+        { name: "Código postal", key: "postcode" },
+        { name: "Calle", key: "road" },
+        { name: "Colonia", key: "quarter" },
+        { name: "Ciudad", key: "city" },
+        { name: "Pueblo", key: "town" },
+        { name: "Municipio", key: "county" },
+        { name: "Estado", key: "state" },
+        { name: "País", key: "country" },
+      ];
+
+      const fieldStructure = fields
+        .map(
+          ({ name, key }) =>
+            `<div class="info">${name}: <span>${places.address?.[key] ?? "N/A"}</span></div>`
+        )
+        .join("");
 
       $result.innerHTML = `
         <div class="place-search__results">
           <div class="grid-section place">
             <div class="info">Nombre Completo: <span>${places?.display_name ?? "N/A"}</span></div>
-            <div class="info">Código Postal: <span>${
-              places.address?.postcode ?? "N/A"
-            }</span></div>
-            <div class="info">Calle: <span>${places.address?.road ?? "N/A"}</span></div>
-            <div class="info">Colonia: <span>${places.address?.quarter ?? "N/A"}</span></div>
-            <div class="info">Ciudad: <span>${places.address?.city ?? "N/A"}</span></div>
-            <div class="info">Estado: <span>${places.address?.state ?? "N/A"}</span></div>
-            <div class="info">Pais: <span>${places.address?.country ?? "N/A"}</span></div>
+            ${fieldStructure}
           </div>
         </div>`;
-
-      console.log(data);
     } catch (err) {
       handleErrors(err, {
         $result,
