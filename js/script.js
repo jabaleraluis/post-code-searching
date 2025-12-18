@@ -115,7 +115,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!data.length) throw new Error("NOT_FOUND");
 
       const places = data[0];
-      console.log(places);
       const fields = [
         { name: "Código postal", key: "postcode" },
         { name: "Calle", key: "road" },
@@ -197,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const handleErrors = (err, { $result, input, type }) => {
     if (err.name === "AbortError") {
-      $result.innerHTML = `<p class="error">El servidor  tardó demasiado en responder... <i class="ri-time-line"></i></p>`;
+      $result.innerHTML = `<p class="error">El servidor  tardó demasiado en responder, intentelo de nuevo más tarde... <i class="ri-time-line"></i></p>`;
       return;
     }
 
@@ -213,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (err instanceof TypeError) {
       $result.innerHTML = navigator.onLine
-        ? `<p class="error">Ha fallado la conexión con el servidor... <i class="ri-cloud-off-line"></i></p>`
+        ? `<p class="error">Ha fallado la conexión con el servidor, intentelo de nuevo más tarde... <i class="ri-cloud-off-line"></i></p>`
         : `<p class="error">Vaya!, parece que no estás conectado a internet... <i class="ri-wifi-off-line"></i></p>`;
       return;
     }

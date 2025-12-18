@@ -8,6 +8,8 @@
   --text-primary-color: #101010;
   --text-secondary-color: #707071;
   --red-color: #cc3233;
+  --blue-color: #33cccc;
+  --shadow-color: #cccccc;
 
   --button-color: #f3f3f3;
   --btn-hover-color: #ebebeb;
@@ -39,7 +41,10 @@
   --secondary-color: #1c1d1d;
   --text-primary-color: #e7e7e7;
   --text-secondary-color: #878687;
+  --blue-color: #40bfbe;
   --red-color: #cc3232;
+
+  --shadow-color: #000;
 
   --button-color: #202020;
   --btn-hover-color: #242424;
@@ -139,15 +144,17 @@ h2 {
 /* ========== NAVBAR ========== */
 header {
   width: 100%;
+  overflow: hidden;
   position: sticky;
   top: 0;
   display: flex;
   align-items: center;
-  padding: clamp(0.75rem, 1.5vw, 1rem) 1.5rem;
+  padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.5rem);
   background: var(--main-color);
-  z-index: 999;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+  box-shadow: 0 0 5px var(--shadow-color);
   border-bottom: 1px solid var(--border-color);
+  transition: 0.3s ease;
+  z-index: 999;
 }
 
 header nav {
@@ -169,13 +176,15 @@ nav .logo i {
 nav .logo p {
   font-size: var(--fs-n);
   font-weight: var(--fw-600);
-  line-height: 1;
+  line-height: 1.2;
   letter-spacing: 1.125px;
+  transition: 0.3s ease;
 }
 
 nav .logo p:nth-child(2) {
-  letter-spacing: 3.125px;
+  letter-spacing: 3.25px;
   font-size: var(--fs-t);
+  font-weight: var(--fw-400);
 }
 
 main {
@@ -466,6 +475,53 @@ main {
 
 .error span {
   font-weight: var(--fw-600);
+}
+
+/* ===== FOOTER ===== */
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.5rem);
+  border-top: 1px solid var(--border-color);
+  transition: 0.3s ease;
+}
+
+footer p {
+  font-size: var(--fs-t);
+}
+
+footer p i {
+  color: var(--red-color);
+  opacity: 0.75;
+}
+
+footer p a {
+  display: inline-flex;
+  color: inherit;
+  font-size: inherit;
+  position: relative;
+  transition: 0.1s ease;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 1px;
+    width: 0;
+    background: var(--text-primary-color);
+    transition: 0.3s ease;
+  }
+
+  &:hover::after {
+    width: 100%;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 @media screen and (max-width: 768px) {
