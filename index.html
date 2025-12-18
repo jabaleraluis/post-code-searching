@@ -11,42 +11,52 @@
 </head>
 
 <body>
-  <div class="theme__switcher">
-    <div class="theme__icon active" data-theme="light">
-      <button><i class="ri-sun-line"></i></button>
-      <span class="theme__tooltip">Light Theme</span>
-    </div>
-    <div class="theme__icon" data-theme="dark">
-      <button><i class="ri-moon-clear-line"></i></button>
-      <span class="theme__tooltip">Dark Theme</span>
-    </div>
-  </div>
-
-  <div class="wrapper active">
-    <section>
-      <h1>Buscador de códigos postales</h1>
-      <div class="post-code__searching">
-        <div class="custom-select">
-          <select name="region" id="region" autocomplete="off">
-            <option value="MX">MX - México</option>
-            <option value="US">US - United State</option>
-            <option value="ES">ES - España</option>
-            <option value="AR">AR - Argentina</option>
-          </select>
-          <i class="ri-arrow-down-s-line"></i>
+  <header>
+    <nav>
+      <a href="#" class="logo">
+        <p>POSTC<i class="ri-earth-line"></i>DE</p>
+        <p>Finder Tool</p>
+      </a>
+      <div class="theme__switcher">
+        <div class="theme__icon active" data-theme="light">
+          <button><i class="ri-sun-line"></i></button>
+          <span class="theme__tooltip">Light Theme</span>
         </div>
-        <input type="text" name="postal_code" id="postal-code" placeholder="Ingresa un código postal (ej. 01000 / 90210)" autocomplete="off">
-        <button id="cp-search">Buscar CP</button>
+        <div class="theme__icon" data-theme="dark">
+          <button><i class="ri-moon-clear-line"></i></button>
+          <span class="theme__tooltip">Dark Theme</span>
+        </div>
       </div>
-      <div class="place__searching">
-        <input type="text" id="input-place" name="place" placeholder="Buscar por: ciudad, colonia, dirección..." autocomplete="off">
-        <button id="place-search">Buscar Lugar</button>
-      </div>
-      <div class="results">
-        <p class="text">Los resultados aparecerán aquí...</p>
-      </div>
-    </section>
-  </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="wrapper">
+      <section>
+        <h1>Buscador de códigos postales</h1>
+        <div class="post-code__searching">
+          <div class="custom-select">
+            <select name="region" id="region" autocomplete="off">
+              <option value="MX">MX - México</option>
+              <option value="US">US - United State</option>
+              <option value="ES">ES - España</option>
+              <option value="AR">AR - Argentina</option>
+            </select>
+            <i class="ri-arrow-down-s-line"></i>
+          </div>
+          <input type="text" name="postal_code" id="postal-code" placeholder="Ingresa un código postal (ej. 01000 / 90210)" autocomplete="off">
+          <button id="cp-search">Buscar CP</button>
+        </div>
+        <div class="place__searching">
+          <input type="text" id="input-place" name="place" placeholder="Buscar por: ciudad, colonia, dirección..." autocomplete="off">
+          <button id="place-search">Buscar Lugar</button>
+        </div>
+        <div class="results">
+          <p class="text">Los resultados aparecerán aquí...</p>
+        </div>
+      </section>
+    </div>
+  </main>
 
   <script src="js/script.js" type="module"></script>
 </body>

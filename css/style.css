@@ -55,8 +55,7 @@ html {
 
 body {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   min-height: 100dvh;
   overflow-x: hidden;
   color: var(--text-primary-color);
@@ -137,11 +136,56 @@ h2 {
   font-weight: var(--fw-400);
 }
 
+/* ========== NAVBAR ========== */
+header {
+  width: 100%;
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  padding: clamp(0.75rem, 1.5vw, 1rem) 1.5rem;
+  background: var(--main-color);
+  z-index: 999;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+  border-bottom: 1px solid var(--border-color);
+}
+
+header nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header nav .logo {
+  display: block;
+  color: var(--text-primary-color);
+}
+
+nav .logo i {
+  font-weight: var(--fw-500);
+}
+
+nav .logo p {
+  font-size: var(--fs-n);
+  font-weight: var(--fw-600);
+  line-height: 1;
+  letter-spacing: 1.125px;
+}
+
+nav .logo p:nth-child(2) {
+  letter-spacing: 3.125px;
+  font-size: var(--fs-t);
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
 /* ========== THEME ========== */
 .theme__switcher {
-  position: absolute;
-  top: 1rem;
-  right: 2.5rem;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -223,6 +267,7 @@ h2 {
 /* ========== SECTION ========== */
 .wrapper {
   width: min(820px, 100%);
+  height: max-content;
   padding: 1.5rem;
   margin: 1.5rem;
   border-radius: 1rem;
@@ -424,11 +469,6 @@ h2 {
 }
 
 @media screen and (max-width: 768px) {
-  /* ===== Theme toggle ===== */
-  .theme__switcher {
-    right: 1.5rem;
-  }
-
   /* ===== FORM ===== */
   .wrapper :where(.place__searching, .post-code__searching) {
     flex-direction: column;
