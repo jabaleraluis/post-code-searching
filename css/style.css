@@ -144,12 +144,11 @@ h2 {
 /* ========== NAVBAR ========== */
 header {
   width: 100%;
-  overflow: hidden;
   position: sticky;
   top: 0;
   display: flex;
   align-items: center;
-  padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.5rem);
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 3vw, 2rem);
   background: var(--main-color);
   box-shadow: 0 0 5px var(--shadow-color);
   border-bottom: 1px solid var(--border-color);
@@ -170,7 +169,22 @@ header nav .logo {
 }
 
 nav .logo i {
+  position: relative;
   font-weight: var(--fw-500);
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--fs-t);
+    height: var(--fs-t);
+    background: var(--blue-color);
+    box-shadow: 0 0 4px var(--blue-color);
+    border-radius: 50%;
+    z-index: -1;
+  }
 }
 
 nav .logo p {
@@ -267,9 +281,9 @@ main {
   opacity: 1;
 }
 
-@media (max-width: 992px) {
-  .theme__switcher .theme__icon:hover .theme__tooltip {
-    opacity: 0;
+@media (max-width: 768px) {
+  .theme__switcher .theme__icon .theme__tooltip {
+    display: none;
   }
 }
 
